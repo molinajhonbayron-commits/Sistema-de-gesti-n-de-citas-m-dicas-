@@ -26,7 +26,7 @@ recordatorios de citas por correo electrónico.
 
 1. **Clonar el repositorio**
    ```bash
-    git clone https://github.com/molinajhonbayron-commits/sistema-gestion-citas-medicas.git
+   git clone https://github.com/molinajhonbayron-commits/sistema-gestion-citas-medicas.git
    cd sistema-gestion-citas-medicas
    ```
 2. **Crear y activar un entorno virtual**
