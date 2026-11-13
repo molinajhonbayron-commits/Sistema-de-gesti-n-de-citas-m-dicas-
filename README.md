@@ -99,4 +99,4 @@ static/      archivos estáticos (CSS)
 ```
 
 ## Autor
-bayron – molinajhonbayron@gmail.com
+bayron – [GitHub](https://github.com/molinajhonbayron-commits)
