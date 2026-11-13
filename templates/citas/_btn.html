@@ -1,0 +1,2 @@
+<form method="post" action="{% url 'citas:estado' c.pk accion %}" class="d-inline">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+<button class="btn btn-sm btn-outline-{{ clase }}" {% if accion == 'cancelar' %}onclick="return confirm('¿Cancelar esta cita?')"{% endif %}>{{ texto }}</button></form>

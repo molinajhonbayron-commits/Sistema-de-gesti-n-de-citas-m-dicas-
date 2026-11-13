@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-head"><div><h1>{{ saludo }}, {{ user.first_name|default:user.username }}</h1>
+  <p class="sub">Hoy es {{ hoy|date:"l j \d\e F" }}{% if user.rol == 'medico' %}. Esta es su actividad.{% endif %}</p></div>
+  {% if user.rol != 'medico' %}<div class="acciones-pag"><a class="btn btn-primary" href="{% url 'citas:agendar' %}"><i class="bi bi-plus-lg"></i> Agendar cita</a></div>{% endif %}</div>
+<div class="dash">
+  <div class="panel">
+    <div class="ph"><h2>Citas de hoy</h2><span>{{ citas_hoy|length }} en total</span></div>
+    {% for c in citas_hoy %}<div class="slot" style="grid-template-columns:76px 1fr auto">
+      <div class="hora">{{ c.hora|time:"H:i" }}</div>
+      <div class="quien"><b>{{ c.paciente.nombre_completo }}</b><small>{{ c.medico.nombre }}</small></div>
+      <span class="estado e-{{ c.estado }}">{{ c.get_estado_display }}</span></div>
+    {% empty %}<div class="vacio"><i class="bi bi-calendar-x"></i>No hay citas programadas para hoy.</div>{% endfor %}
+  </div>
+  <div>
+    <div class="panel">
+      <div class="ph"><h2>{{ hoy|date:"F" }} en cifras</h2></div>
+      <dl class="resumen">
+        <dt>Citas del mes</dt><dd>{{ total_mes }}</dd>
+        <dt>Atendidas</dt><dd>{{ atendidas_mes }}</dd>
+        <dt>Pacientes atendidos</dt><dd>{{ pacientes_atendidos }}</dd>
+        {% if user.rol == 'admin' %}<dt>Ingresos cobrados</dt><dd>${{ ingresos_mes|floatformat:0 }}</dd>{% endif %}
+      </dl>
+    </div>
+    <div class="panel">
+      <div class="ph"><h2>Citas por estado</h2></div>
+      <div class="barras">{% for etq, n, clave in por_estado %}
+        <div class="barra e-{{ clave }}"><div class="t"><span>{{ etq }}</span><b>{{ n }}</b></div><div class="pista"><i style="width:{% widthratio n total_mes 100 %}%"></i></div></div>{% endfor %}</div>
+    </div>
+    {% if user.rol == 'admin' %}<div class="panel">
+      <div class="ph"><h2>Carga por médico</h2><span>citas del mes</span></div>
+      <div class="barras">{% for nombre, n in carga %}
+        <div class="barra"><div class="t"><span>{{ nombre }}</span><b>{{ n }}</b></div><div class="pista"><i style="width:{% widthratio n carga_max 100 %}%"></i></div></div>
+      {% empty %}<p class="text-muted mb-0">Aún no hay médicos activos.</p>{% endfor %}</div>
+    </div>{% endif %}
+  </div>
+</div>
+{% endblock %}

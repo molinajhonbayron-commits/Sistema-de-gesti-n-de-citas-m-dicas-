@@ -1,0 +1,13 @@
+{% extends 'base_auth.html' %}
+{% block title %}Ingresar · Citas médicas{% endblock %}
+{% block form %}
+<h2>Ingresar</h2>
+<p class="text-muted mb-4">Use el usuario y la contraseña que le dieron en la clínica.</p>
+<form method="post">{% csrf_token %}
+  {% if form.non_field_errors %}<div class="flash error">Usuario o contraseña incorrectos. Revise e intente de nuevo.</div>{% endif %}
+  {% for f in form %}<div class="mb-3"><label for="{{ f.id_for_label }}">{{ f.label }}</label>{{ f }}</div>{% endfor %}
+  <input type="hidden" name="next" value="{{ next }}">
+  <button class="btn btn-primary w-100 mt-2">Ingresar</button>
+</form>
+<hr class="my-4"><p class="mb-0">¿Es su primera vez? <a href="{% url 'registro' %}">Cree su cuenta de paciente</a></p>
+{% endblock %}

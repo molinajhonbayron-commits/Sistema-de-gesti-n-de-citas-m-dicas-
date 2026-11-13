@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="panel">
+  <h1>Registrar consulta</h1>
+  <p class="mb-0">Paciente: <strong>{{ cita.paciente.nombre_completo }}</strong> ({{ cita.paciente.documento }}){% if cita.paciente.edad %} · {{ cita.paciente.edad }} años{% endif %}
+  · Cita: {{ cita.fecha|date:"d/m/Y" }} {{ cita.hora|time:"H:i" }} · Motivo: {{ cita.motivo|default:"—" }}</p>
+</div></div>
+<div class="row"><div class="col-lg-8">
+<form method="post">{% csrf_token %}
+  <div class="panel">
+    {{ form.non_field_errors }}
+    {% for f in form %}<div class="mb-3"><label class="form-label">{{ f.label }}</label>{{ f }}{% for e in f.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}</div>{% endfor %}
+  </div></div>
+  <div class="panel"><h5>Receta (medicamentos)</h5>
+    {{ recetas.management_form }}
+    {% for rf in recetas %}<div class="row g-2 mb-2">{{ rf.id }}
+      <div class="col-md-4">{{ rf.medicamento }}</div><div class="col-md-3">{{ rf.dosis }}</div><div class="col-md-3">{{ rf.indicaciones }}</div>
+      <div class="col-md-2">{% if rf.instance.pk %}<label class="small">{{ rf.DELETE }} Quitar</label>{% endif %}</div>
+      {% for f in rf %}{% for e in f.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}{% endfor %}</div>{% endfor %}
+    <p class="small text-muted mb-0">Medicamento · Dosis · Indicaciones. Guarde para agregar más filas.</p></div></div>
+  <div class="panel"><h5>Órdenes de exámenes</h5>
+    {{ ordenes.management_form }}
+    {% for of in ordenes %}<div class="row g-2 mb-2">{{ of.id }}
+      <div class="col-md-4">{{ of.examen }}</div><div class="col-md-3">{{ of.indicaciones }}</div><div class="col-md-3">{{ of.resultado }}</div>
+      <div class="col-md-2">{% if of.instance.pk %}<label class="small">{{ of.DELETE }} Quitar</label>{% endif %}</div>
+      {% for f in of %}{% for e in f.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}{% endfor %}</div>{% endfor %}
+    <p class="small text-muted mb-0">Examen · Indicaciones · Resultado (se puede completar después).</p></div></div>
+  <button class="btn btn-primary">Guardar consulta y marcar como atendida</button> <a class="btn btn-light" href="{% url 'citas:agenda' %}">Volver a la agenda</a>
+</form></div>
+<div class="col-lg-4"><div class="panel"><h6>Antecedentes recientes</h6>
+  {% for c in previo %}<div class="border-bottom pb-2 mb-2 small"><strong>{{ c.cita.fecha|date:"d/m/Y" }}</strong> · {{ c.cita.medico.nombre }}<br>{{ c.diagnostico|truncatechars:120 }}</div>
+  {% empty %}<p class="text-muted small mb-0">Sin consultas previas.</p>{% endfor %}
+</div></div></div></div>
+{% endblock %}

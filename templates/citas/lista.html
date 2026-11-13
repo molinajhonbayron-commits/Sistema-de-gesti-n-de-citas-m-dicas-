@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-head"><div><h1>Citas</h1><p class="sub">Confirme, reprograme y cobre desde aquí.</p></div>
+  <div class="acciones-pag"><a class="btn btn-primary" href="{% url 'citas:agendar' %}"><i class="bi bi-plus-lg"></i> Agendar cita</a></div></div>
+<form class="toolbar">
+  <div><label>Fecha</label><input type="date" class="form-control" name="fecha" value="{{ fecha }}"></div>
+  <div class="grow"><label>Médico</label><select class="form-select" name="medico"><option value="">Todos</option>{% for m in medicos %}<option value="{{ m.pk }}" {% if m.pk|stringformat:"s" == medico %}selected{% endif %}>{{ m.nombre }}</option>{% endfor %}</select></div>
+  <div><label>Estado</label><select class="form-select" name="estado"><option value="">Todos</option>{% for k, v in estados %}<option value="{{ k }}" {% if k == estado %}selected{% endif %}>{{ v }}</option>{% endfor %}</select></div>
+  <div><button class="btn btn-primary">Filtrar</button> <a class="btn btn-light" href="?fecha=">Ver todas</a></div>
+</form>
+<div class="card"><div class="table-responsive"><table class="table align-middle">
+  <thead><tr><th>Fecha y hora</th><th>Paciente</th><th>Médico</th><th>Estado</th><th>Pago</th><th></th></tr></thead>
+  {% for c in citas %}<tr><td><b>{{ c.fecha|date:"d/m/Y" }}</b><br><span class="serif fs-5">{{ c.hora|time:"H:i" }}</span></td><td>{{ c.paciente.nombre_completo }}</td>
+    <td>{{ c.medico.nombre }}<br><small class="text-muted">{{ c.medico.especialidad }}</small></td>
+    <td><span class="estado e-{{ c.estado }}">{{ c.get_estado_display }}</span></td>
+    <td>{% if c.pagado %}<span class="chip ok">Pagado ${{ c.valor|floatformat:0 }}</span>{% else %}<span class="text-muted">${{ c.valor|floatformat:0 }} por cobrar</span>{% endif %}</td>
+    <td>{% include 'citas/_acciones.html' %}</td></tr>
+  {% empty %}<tr><td colspan="6"><div class="vacio"><i class="bi bi-search"></i>No hay citas con esos filtros.</div></td></tr>{% endfor %}
+</table></div></div>
+{% endblock %}

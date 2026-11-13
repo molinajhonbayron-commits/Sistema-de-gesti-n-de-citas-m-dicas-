@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-head"><h1>Reporte de citas</h1><a class="btn btn-success" href="?{{ query }}{% if query %}&{% endif %}export=csv">⬇ Exportar CSV</a></div>
+{% include 'reportes/_filtros.html' %}
+<p>{% for e, n in resumen %}<span class="chip me-1">{{ e }}: {{ n }}</span>{% endfor %} <span class="chip ok">Total: {{ citas|length }}</span></p>
+<div class="card"><div class="table-responsive"><table class="table table-sm mb-0">
+  <thead><tr><th>Fecha</th><th>Hora</th><th>Paciente</th><th>Médico</th><th>Especialidad</th><th>Estado</th><th>Valor</th><th>Pagado</th></tr></thead>
+  {% for c in citas %}<tr><td>{{ c.fecha|date:"d/m/Y" }}</td><td>{{ c.hora|time:"H:i" }}</td><td>{{ c.paciente.nombre_completo }}</td><td>{{ c.medico.nombre }}</td>
+    <td>{{ c.medico.especialidad }}</td><td>{{ c.get_estado_display }}</td><td>${{ c.valor|floatformat:0 }}</td><td>{% if c.pagado %}Sí{% else %}No{% endif %}</td></tr>
+  {% empty %}<tr><td colspan="8" class="text-center text-muted py-3">Sin resultados.</td></tr>{% endfor %}
+</table></div></div>
+{% endblock %}

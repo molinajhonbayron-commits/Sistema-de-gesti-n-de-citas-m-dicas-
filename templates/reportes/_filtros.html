@@ -1,0 +1,9 @@
+<form class="toolbar">
+  <div><label>Desde</label><input type="date" class="form-control" name="desde" value="{{ g.desde }}"></div>
+  <div><label>Hasta</label><input type="date" class="form-control" name="hasta" value="{{ g.hasta }}"></div>
+  <div><label>Médico</label><select class="form-select" name="medico"><option value="">Todos</option>{% for m in medicos %}<option value="{{ m.pk }}" {% if m.pk|stringformat:"s" == g.medico %}selected{% endif %}>{{ m.nombre }}</option>{% endfor %}</select></div>
+  {% if estados %}<div><label>Estado</label><select class="form-select" name="estado"><option value="">Todos</option>{% for k, v in estados %}<option value="{{ k }}" {% if k == g.estado %}selected{% endif %}>{{ v }}</option>{% endfor %}</select></div>{% endif %}
+  {% if periodo %}<div><label>Agrupar por</label><select class="form-select" name="periodo">
+    <option value="dia" {% if periodo == 'dia' %}selected{% endif %}>Día</option><option value="mes" {% if periodo == 'mes' %}selected{% endif %}>Mes</option><option value="anio" {% if periodo == 'anio' %}selected{% endif %}>Año</option></select></div>{% endif %}
+  <div><button class="btn btn-outline-primary">Filtrar</button></div>
+</form>

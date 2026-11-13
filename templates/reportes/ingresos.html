@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-head"><h1>Ingresos (citas pagadas)</h1><a class="btn btn-success" href="?{{ query }}{% if query %}&{% endif %}export=csv">⬇ Exportar CSV</a></div>
+{% include 'reportes/_filtros.html' %}
+<div class="card"><table class="table mb-0">
+  <thead><tr><th>Periodo</th><th class="text-end">Citas pagadas</th><th class="text-end">Ingresos</th></tr></thead>
+  {% for p, n, t in filas %}<tr><td>{{ p }}</td><td class="text-end">{{ n }}</td><td class="text-end">${{ t|floatformat:0 }}</td></tr>
+  {% empty %}<tr><td colspan="3" class="text-center text-muted py-3">Sin pagos registrados en el rango.</td></tr>{% endfor %}
+  <tr class="table-light fw-bold"><td>Total</td><td></td><td class="text-end">${{ total|floatformat:0 }}</td></tr>
+</table></div>
+{% endblock %}

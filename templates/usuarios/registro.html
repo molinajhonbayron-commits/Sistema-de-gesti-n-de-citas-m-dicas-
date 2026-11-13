@@ -1,0 +1,16 @@
+{% extends 'base_auth.html' %}
+{% block title %}Crear cuenta · Citas médicas{% endblock %}
+{% block ancho %}ancho{% endblock %}
+{% block form %}
+<h2>Cree su cuenta de paciente</h2>
+<p class="text-muted mb-4">Con ella podrá pedir citas y ver su historial.</p>
+<form method="post">{% csrf_token %}
+  {{ form.non_field_errors }}
+  <div class="form-grid">{% for f in form %}
+    <div class="{% if f.name == 'password1' or f.name == 'password2' %}full{% endif %}"><label for="{{ f.id_for_label }}">{{ f.label }}</label>{{ f }}
+      {% for e in f.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+      {% if f.help_text and f.name != 'password1' %}<div class="form-text">{{ f.help_text|safe }}</div>{% endif %}</div>{% endfor %}
+  </div>
+  <div class="form-actions"><button class="btn btn-primary">Crear cuenta</button><a class="btn btn-light" href="{% url 'login' %}">Ya tengo cuenta</a></div>
+</form>
+{% endblock %}

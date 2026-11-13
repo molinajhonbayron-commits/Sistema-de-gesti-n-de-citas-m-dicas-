@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-head"><div><h1>Mi agenda</h1>
+  <p class="sub">{% if vista == 'semana' %}Semana del {{ inicio|date:"j \d\e F" }} al {{ fin|date:"j \d\e F" }}{% else %}{{ fecha|date:"l j \d\e F \d\e Y" }}{% endif %}</p></div>
+  <div class="acciones-pag">
+    <a class="btn btn-light" href="?vista={{ vista }}&fecha={{ anterior|date:'Y-m-d' }}" aria-label="Anterior"><i class="bi bi-chevron-left"></i></a>
+    <a class="btn btn-light" href="?vista={{ vista }}">Hoy</a>
+    <a class="btn btn-light" href="?vista={{ vista }}&fecha={{ siguiente|date:'Y-m-d' }}" aria-label="Siguiente"><i class="bi bi-chevron-right"></i></a>
+    <a class="btn {% if vista == 'dia' %}btn-primary{% else %}btn-light{% endif %}" href="?vista=dia&fecha={{ fecha|date:'Y-m-d' }}">Día</a>
+    <a class="btn {% if vista == 'semana' %}btn-primary{% else %}btn-light{% endif %}" href="?vista=semana&fecha={{ fecha|date:'Y-m-d' }}">Semana</a>
+  </div></div>
+{% regroup citas by fecha as dias %}
+{% for d in dias %}
+<div class="panel py-2"><div class="ph pt-2"><h2>{{ d.grouper|date:"l j \d\e F" }}</h2><span>{{ d.list|length }} cita{{ d.list|length|pluralize }}</span></div>
+  {% for c in d.list %}<div class="slot" style="grid-template-columns:76px 1fr auto auto">
+    <div class="hora">{{ c.hora|time:"H:i" }}</div>
+    <div class="quien"><b>{{ c.paciente.nombre_completo }}{% if c.paciente.edad %}, {{ c.paciente.edad }} años{% endif %}</b>
+      <small>{{ c.motivo|default:"Sin motivo indicado" }}{% if c.paciente.telefono %}. Tel. {{ c.paciente.telefono }}{% endif %}</small></div>
+    <span class="estado e-{{ c.estado }}">{{ c.get_estado_display }}</span>
+    <div class="acciones">
+      <a class="btn btn-sm btn-outline-secondary" href="{% url 'historial:paciente' c.paciente.pk %}">Historial</a>
+      <a class="btn btn-sm btn-primary" href="{% url 'historial:registrar' c.pk %}">{% if c.estado == 'atendida' %}Ver consulta{% else %}Atender{% endif %}</a>
+      {% if c.activa %}{% include 'citas/_btn.html' with accion='atender' texto='Marcar atendida' clase='success' %}{% endif %}
+    </div></div>{% endfor %}
+</div>
+{% empty %}<div class="panel"><div class="vacio"><i class="bi bi-calendar-x"></i>No tiene citas en este período.</div></div>{% endfor %}
+{% endblock %}

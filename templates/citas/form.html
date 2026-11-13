@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-head"><div><h1>{{ titulo }}</h1><p class="sub">Las horas libres aparecen al elegir médico y fecha.</p></div></div>
+<div class="panel form-wrap">
+  <form method="post">{% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="form-grid">{% for f in form %}<div class="{% if f.name == 'motivo' or f.name == 'paciente' %}full{% endif %}"><label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}</label>{{ f }}
+      {% for e in f.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}</div>{% endfor %}</div>
+    <div class="form-actions"><button class="btn btn-primary">Guardar cita</button><a class="btn btn-light" href="{% url 'inicio' %}">Cancelar</a></div>
+  </form>
+</div>
+{{ medicos_data|json_script:"medicos-data" }}
+{% endblock %}
+{% block scripts %}
+<script>
+const medicos = JSON.parse(document.getElementById('medicos-data').textContent);
+const esp = document.getElementById('id_especialidad'), med = document.getElementById('id_medico'),
+      fec = document.getElementById('id_fecha'), hor = document.getElementById('id_hora');
+const HORA_INICIAL = "{{ form.hora.value|default_if_none:'' }}".slice(0, 5);
+fec.min = new Date().toLocaleDateString('en-CA');
+
+function filtrarMedicos() {
+  const actual = med.value;
+  med.innerHTML = '<option value="">---------</option>';
+  medicos.filter(m => !esp.value || String(m.esp) === esp.value)
+         .forEach(m => med.add(new Option(m.nombre + ' — ' + m.esp_nombre, m.id)));
+  med.value = actual;
+}
+async function cargarHoras(inicial) {
+  const previa = inicial ? HORA_INICIAL : hor.value;
+  hor.innerHTML = '';
+  if (!med.value || !fec.value) return;
+  const r = await fetch(`{% url 'citas:horas' %}?medico=${med.value}&fecha=${fec.value}&cita={{ cita_id }}`);
+  const d = await r.json();
+  if (!d.horas.length) hor.add(new Option('Sin horas disponibles', ''));
+  d.horas.forEach(h => hor.add(new Option(h, h)));
+  if (previa) hor.value = previa;
+}
+esp.addEventListener('change', () => { filtrarMedicos(); cargarHoras(false); });
+med.addEventListener('change', () => cargarHoras(false));
+fec.addEventListener('change', () => cargarHoras(false));
+if (!esp.value && med.value) { const m = medicos.find(x => String(x.id) === med.value); if (m) esp.value = m.esp; }
+filtrarMedicos(); cargarHoras(true);
+</script>
+{% endblock %}

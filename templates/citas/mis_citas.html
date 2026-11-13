@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-head"><div><h1>Mis citas</h1><p class="sub">Sus próximas citas y las que ya pasaron.</p></div>
+  <div class="acciones-pag"><a class="btn btn-primary" href="{% url 'citas:agendar' %}"><i class="bi bi-plus-lg"></i> Solicitar cita</a></div></div>
+<div class="panel py-1">
+  {% for c in citas %}<div class="slot" style="grid-template-columns:70px 1fr auto auto">
+    <div class="datebox"><b>{{ c.fecha|date:"d" }}</b><span>{{ c.fecha|date:"M" }}</span></div>
+    <div class="quien"><b>{{ c.medico.nombre }}</b><small>{{ c.medico.especialidad }}, a las {{ c.hora|time:"H:i" }}{% if c.motivo %}. {{ c.motivo }}{% endif %}</small></div>
+    <span class="estado e-{{ c.estado }}">{{ c.get_estado_display }}</span>
+    {% include 'citas/_acciones.html' %}</div>
+  {% empty %}<div class="vacio"><i class="bi bi-calendar-plus"></i>Todavía no tiene citas.<br><a href="{% url 'citas:agendar' %}">Pida su primera cita</a></div>{% endfor %}
+</div>
+{% endblock %}

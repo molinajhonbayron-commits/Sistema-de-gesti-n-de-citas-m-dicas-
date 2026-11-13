@@ -1,0 +1,12 @@
+<div class="acciones">
+{% if user.rol == 'recepcionista' or user.rol == 'admin' %}
+  {% if c.estado == 'pendiente' %}{% include 'citas/_btn.html' with accion='confirmar' texto='Confirmar' clase='primary' %}{% endif %}
+  {% if c.estado == 'pendiente' or c.estado == 'confirmada' %}{% include 'citas/_btn.html' with accion='llegada' texto='Llegó' clase='info' %}{% endif %}
+  {% if c.activa %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'citas:reprogramar' c.pk %}">Reprogramar</a>{% endif %}
+  {% if c.estado != 'cancelada' %}<a class="btn btn-sm btn-outline-success" href="{% url 'citas:pago' c.pk %}">Pago</a>{% endif %}
+  {% if c.activa %}{% include 'citas/_btn.html' with accion='cancelar' texto='Cancelar' clase='danger' %}{% endif %}
+{% elif user.rol == 'paciente' %}
+  {% if c.consulta %}<a class="btn btn-sm btn-outline-primary" href="{% url 'historial:detalle' c.consulta.pk %}">Ver atención</a>{% endif %}
+  {% if c.estado == 'pendiente' or c.estado == 'confirmada' %}{% include 'citas/_btn.html' with accion='cancelar' texto='Cancelar cita' clase='danger' %}{% endif %}
+{% endif %}
+</div>

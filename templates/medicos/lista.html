@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-head"><div><h1>Médicos</h1><p class="sub">Especialidades y horarios de atención.</p></div>
+  {% if user.rol == 'admin' %}<div class="acciones-pag"><a class="btn btn-primary" href="{% url 'medicos:nuevo' %}"><i class="bi bi-plus-lg"></i> Nuevo médico</a></div>{% endif %}</div>
+<form class="toolbar"><div class="grow"><label>Especialidad</label><select class="form-select" name="especialidad" onchange="this.form.submit()"><option value="">Todas</option>
+  {% for e in especialidades %}<option value="{{ e.pk }}" {% if e.pk|stringformat:"s" == esp %}selected{% endif %}>{{ e.nombre }}</option>{% endfor %}</select></div></form>
+<div class="row g-3">{% for m in medicos %}
+  <div class="col-lg-6"><div class="panel h-100 mb-0"><div class="doc {% if not m.activo %}inactivo{% endif %}">
+    <span class="avatar">{{ m.user.first_name|slice:":1" }}{{ m.user.last_name|slice:":1" }}</span>
+    <div class="flex-fill">
+      <div class="d-flex justify-content-between"><h3>{{ m.nombre }}</h3>{% if not m.activo %}<span class="chip off">Inactivo</span>{% endif %}</div>
+      <div class="esp">{{ m.especialidad }}</div>
+      <small class="text-muted">{% if m.consultorio %}{{ m.consultorio }}. {% endif %}Consulta ${{ m.tarifa|floatformat:0 }}</small>
+      <div class="horarios">{% for h in m.horarios.all %}<span class="chip horario">{{ h }}</span>{% empty %}<small class="text-muted">Sin horarios definidos</small>{% endfor %}</div>
+      {% if user.rol == 'admin' %}<div class="acciones justify-content-start"><a class="btn btn-sm btn-outline-secondary" href="{% url 'medicos:editar' m.pk %}">Editar</a>
+        <form method="post" action="{% url 'medicos:estado' m.pk %}">{% csrf_token %}<button class="btn btn-sm btn-outline-{% if m.activo %}danger{% else %}success{% endif %}">{% if m.activo %}Desactivar{% else %}Activar{% endif %}</button></form></div>{% endif %}
+    </div></div></div></div>
+{% empty %}<div class="col-12"><div class="panel"><div class="vacio"><i class="bi bi-person-badge"></i>No hay médicos registrados.</div></div></div>{% endfor %}</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Historial de atención</h1>
+<p class="text-muted">{{ paciente.nombre_completo }} · {{ paciente.documento }}{% if paciente.edad %} · {{ paciente.edad }} años{% endif %}</p>
+{% for c in consultas %}
+<div class="panel">
+  <div class="d-flex justify-content-between"><h6>{{ c.cita.fecha|date:"d/m/Y" }} · {{ c.cita.medico.nombre }} <small class="text-muted">({{ c.cita.medico.especialidad }})</small></h6>
+    <a class="btn btn-sm btn-outline-primary" href="{% url 'historial:detalle' c.pk %}">Ver / imprimir</a></div>
+  <p class="mb-1"><strong>Diagnóstico:</strong> {{ c.diagnostico }}</p>
+  {% if c.tratamiento %}<p class="mb-1"><strong>Tratamiento:</strong> {{ c.tratamiento }}</p>{% endif %}
+  {% if c.recetas.all %}<p class="mb-1 small"><strong>Recetas:</strong> {% for r in c.recetas.all %}{{ r.medicamento }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}
+  {% if c.ordenes.all %}<p class="mb-0 small"><strong>Exámenes:</strong> {% for o in c.ordenes.all %}{{ o.examen }}{% if o.resultado %} (con resultado){% endif %}{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}
+</div></div>
+{% empty %}<div class="alert alert-light">Aún no hay atenciones registradas.</div>{% endfor %}
+{% endblock %}

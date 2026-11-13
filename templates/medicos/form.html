@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="panel">
+  <h1>{% if medico %}Editar médico{% else %}Nuevo médico{% endif %}</h1>
+  <form method="post">{% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="row">{% for f in form %}<div class="col-md-4 mb-3">
+      {% if f.field.widget.input_type == 'checkbox' %}<div class="form-check mt-4">{{ f }} <label class="form-check-label">{{ f.label }}</label></div>
+      {% else %}<label class="form-label">{{ f.label }}</label>{{ f }}{% endif %}
+      {% for e in f.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}</div>{% endfor %}</div>
+    <h5 class="mt-2">Horarios de atención</h5>
+    {{ formset.management_form }}{{ formset.non_form_errors }}
+    {% for hf in formset %}<div class="row align-items-end mb-2">
+      {{ hf.id }}{{ hf.non_field_errors }}
+      <div class="col-md-4">{{ hf.dia }}</div><div class="col-md-3">{{ hf.hora_inicio }}</div><div class="col-md-3">{{ hf.hora_fin }}</div>
+      <div class="col-md-2">{% if hf.instance.pk %}<div class="form-check">{{ hf.DELETE }} <label class="form-check-label">Eliminar</label></div>{% endif %}</div>
+      {% for f in hf %}{% for e in f.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}{% endfor %}
+    </div>{% endfor %}
+    <p class="small text-muted">Las citas se generan en bloques de 30 minutos dentro de cada franja. Deje en blanco las filas que no use.</p>
+    <button class="btn btn-primary">Guardar</button> <a class="btn btn-light" href="{% url 'medicos:lista' %}">Cancelar</a>
+  </form>
+</div></div>
+{% endblock %}

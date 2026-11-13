@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-print-none mb-3"><button class="btn btn-primary" onclick="window.print()">🖨 Imprimir</button>
+  <a class="btn btn-light" href="javascript:history.back()">Volver</a></div>
+<div class="panel">
+  <h1>Constancia de atención médica</h1><hr>
+  <p><strong>Paciente:</strong> {{ c.cita.paciente.nombre_completo }} ({{ c.cita.paciente.documento }})<br>
+  <strong>Médico:</strong> {{ c.cita.medico.nombre }} — {{ c.cita.medico.especialidad }}<br>
+  <strong>Fecha:</strong> {{ c.cita.fecha|date:"d/m/Y" }} {{ c.cita.hora|time:"H:i" }}</p>
+  <h6>Diagnóstico</h6><p>{{ c.diagnostico|linebreaksbr }}</p>
+  {% if c.tratamiento %}<h6>Tratamiento</h6><p>{{ c.tratamiento|linebreaksbr }}</p>{% endif %}
+  {% if c.observaciones %}<h6>Observaciones</h6><p>{{ c.observaciones|linebreaksbr }}</p>{% endif %}
+  {% if c.recetas.all %}<h6>Receta médica</h6><table class="table table-sm"><tr><th>Medicamento</th><th>Dosis</th><th>Indicaciones</th></tr>
+    {% for r in c.recetas.all %}<tr><td>{{ r.medicamento }}</td><td>{{ r.dosis }}</td><td>{{ r.indicaciones }}</td></tr>{% endfor %}</table>{% endif %}
+  {% if c.ordenes.all %}<h6>Órdenes de exámenes</h6><table class="table table-sm"><tr><th>Examen</th><th>Indicaciones</th><th>Resultado</th></tr>
+    {% for o in c.ordenes.all %}<tr><td>{{ o.examen }}</td><td>{{ o.indicaciones }}</td><td>{{ o.resultado|default:"Pendiente" }}</td></tr>{% endfor %}</table>{% endif %}
+  <p class="mt-5 mb-0">_______________________________<br>{{ c.cita.medico.nombre }}</p>
+</div></div>
+{% endblock %}
